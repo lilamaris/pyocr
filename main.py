@@ -1,29 +1,32 @@
-from concurrent.futures import ProcessPoolExecutor, as_completed
-from pathlib import Path
+def parseargs():
+    import argparse
 
-from module.io_helper import get_format_time, iter_image, save_dict
-from module.ocr import ocr_by_rois
-from module.pos import recipe_roi_rect
+    parser = argparse.ArgumentParser()
 
-import argparse
+    parser.add_argument(
+        "--dry",
+        action=argparse.BooleanOptionalAction,
+        help="for test. will be not save to output.",
+    )
 
-parser = argparse.ArgumentParser()
-
-parser.add_argument(
-    "--dry",
-    action=argparse.BooleanOptionalAction,
-    help="for test. will be not save to output.",
-)
-
-args = parser.parse_args()
-is_dry = args.dry
+    return parser.parse_args()
 
 
 def run():
     from dotenv import load_dotenv
     import os
 
+    from concurrent.futures import ProcessPoolExecutor, as_completed
+    from pathlib import Path
+
+    from module.io_helper import get_format_time, iter_image, save_dict
+    from module.ocr import ocr_by_rois
+    from module.pos import recipe_roi_rect
+
     load_dotenv()
+
+    args = parseargs()
+    is_dry = args.dry
 
     INPUT_DIR = Path(os.environ.get("INPUT_DIR") or "inputImage")
     OUTPUT_DIR = Path(os.environ.get("OUTPUT_DIR") or "output")
